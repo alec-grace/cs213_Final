@@ -4,38 +4,49 @@ import java.util.*;
 
 public class Driver {
     
-public static void main(String args[]) {
+    public static void main(String args[]) {
         
         Account stu1 = new Account("Grace", "Alec", 'm', "12/06/1999", 's',
                                     1);
         Account stu2 = new Account("Hammersmith", "Kilian", 'm', "6/02/1998", 'c',
-                                    1, 100.0);
+                                    1, 100.99);
         Account fac1 = new Account("Prasad", "Rajesh", 'm', "12/31/2024", 's',
                                     2);
         Account fac2 = new Account("Traynor", "Carol", 'f', "1/01/2024", 'c',
-                                    2, 100.0);
+                                    2, 100.1);
         Account staff = new Account("Milbury", "Mike", 'm', "6/17/1952", 's',
-                                    3, 420.69);
+                                    3, 50000.50);
         
         Account[] currentCustomers = {stu1, stu2, fac1, fac2, staff};
         Scanner sc = new Scanner(System.in);
         String rawInput;
+        String menu = "1. Display all accounts" +
+                    "\n2. Total number of accounts" + 
+                    "\n3. Open account with initial deposit" +
+                    "\n4. Open account without initial deposit" + 
+                    "\n5. Add interest to all accounts" + 
+                    "\n6. Display low balance accounts (balance < $100)" +
+                    "\n7. Display all employee accounts with balance > $5000" + 
+                    "\n8. Search for account by last name" +
+                    "\n9. Display savings accounts sorted by first name" +
+                    "\n0. Exit\n";
+        
+        boolean goodInput, bypass;
+        int userChoice;
         
         do {
-            boolean goodInput = false;
-            int userChoice = 0;
+            
+            goodInput = false;
+            bypass = false;
+            userChoice = 0;
+            
             while (!goodInput) {
 
                 try {
 
-                    System.out.println("----------Menu----------");
-                    System.out.println("1. Display all accounts" + 
-                            "\n2. Make a deposit to an account" + 
-                            "\n3. Make a withdrawal from an account" + 
-                            "\n4. Add interest to all accounts" + 
-                            "\n5. Display total number of accounts" + 
-                            "\n6. Exit" +
-                            "\n\nEnter choice: ");
+                    System.out.println("\n----------Menu----------\n");
+                    System.out.println(menu);
+                    System.out.println("Enter choice: ");
 
                     rawInput = sc.nextLine();
                     userChoice = Integer.parseInt(rawInput);
@@ -59,6 +70,18 @@ public static void main(String args[]) {
                     Utilities.displayAll(currentCustomers);
                     break;
                 case 2:
+                    // TODO:
+                    // Decide how to implement accountCounting()
+                    // Maybe just return 1,2,-1 and make new function for printing?
+                    
+                    
+                    break;
+                default:
+                    break;
+                    
+                    
+                /*
+                case 2:
                     String depositAccount = Utilities.getValidAccount();
                     double deposit = Utilities.getUserDouble("Enter an amount to deposit: " );
                     Utilities.makeDeposit(currentCustomers, depositAccount, deposit);
@@ -76,8 +99,10 @@ public static void main(String args[]) {
                     break;
                 case 6:
                     System.exit(0);
+                    */
             }
         } while (Utilities.playAgain());
+        
+        sc.close();
     }
-    
 }

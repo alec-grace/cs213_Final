@@ -19,6 +19,9 @@ public class Account {
     private final char accountType;
     private final int personType;
     private double balance;
+    private static int numOfAccounts = 0;
+    private static int numOfSavings = 0;
+    private static int numOfCheckings = 0;
     
     Account(String lName, String fName, char gender, String bday,
             char accType, int person, double initBalance) {
@@ -33,6 +36,14 @@ public class Account {
         accountType = accType;
         personType = person;
         balance = initBalance;
+        
+        numOfAccounts++;
+        
+        if (accountType == 'c') {
+            numOfCheckings ++;
+        } else if (accountType == 's') {
+            numOfSavings++;
+        }
         
     }
 
@@ -49,6 +60,14 @@ public class Account {
         accountType = accType;
         personType = person;
         balance = 0.0;
+        
+        numOfAccounts++;
+        
+        if (accountType == 'c') {
+            numOfCheckings ++;
+        } else if (accountType == 's') {
+            numOfSavings++;
+        }
         
     }
     
@@ -170,6 +189,20 @@ public class Account {
     
     public char getAccountType(){
         return this.accountType;
+    }
+    
+    //Class Variable Getters
+    
+    public static int getNumOfAccounts() {
+        return numOfAccounts;
+    }
+    
+    public static int getNumOfCheckings() {
+        return numOfCheckings;
+    }
+    
+    public static int getNumOfSavings() {
+        return numOfSavings;
     }
     
 }

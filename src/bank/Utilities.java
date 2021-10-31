@@ -139,25 +139,48 @@ public class Utilities {
             people[i].addInterest();
         }
     }
-    public static void numOfAccounts(Account[] people){
-        int student = 0;
-        int employee = 0;
-        int checking = 0;
-        int saving = 0;
-        for (int i = 0 ; i < people.length ; i++){
-            if (people[i].getAccountType() == 'c')
-                checking++;
-            if (people[i].getAccountType() == 's')
-                saving++;
-            if (people[i].getPersonType() == 1)
-                student++;
-            if (people[i].getPersonType() == 2 || people[i].getPersonType() == 3)
-                employee++;
+
+    public static int accountCounting() {
+        
+        boolean goodInput = false;
+        int secondChoice = 0;
+        String raw;
+        Scanner sc = new Scanner(System.in);
+        
+        while (!goodInput) {
+            try {
+                
+                System.out.println("Select account type to count: " +
+                                "\n 1. Checking" +
+                                "\n 2. Saving" + 
+                                "\n 3. Back to main menu" +
+                                "\n\nChoice: ");
+                
+                raw = sc.nextLine();
+                secondChoice = Integer.parseInt(raw);
+                
+                if (secondChoice > 0 && secondChoice < 4) {
+                    goodInput = true;
+                } else {
+                    System.out.println("Please enter an integer between 1 and 3");
+                    goodInput = false;
+                }
+                
+            } catch (java.lang.NumberFormatException e) {
+                System.out.println("Please enter a number");
+            }
         }
-        System.out.println("There are " + student + " student accounts\n"
-                + "There are " + employee + " employee accounts \n" 
-                + "There are " + checking + " checking accounts \n" 
-                + "There are " + saving + " saving accounts");
+        
+        sc.close();
+        
+        if (secondChoice == 1) {
+            return Account.getNumOfCheckings();
+        } else if (secondChoice == 2) {
+            return Account.getNumOfSavings();
+        } else {
+            return -1;
+        }
+        
     }
     
 }
