@@ -6,21 +6,64 @@ public class Driver {
     
     public static void main(String args[]) {
         
-        Account stu1 = new Account("Grace", "Alec", 'm', "12/06/1999", 's',
-                                    1);
-        Account stu2 = new Account("Hammersmith", "Kilian", 'm', "6/02/1998", 'c',
-                                    1, 100.99);
-        Account fac1 = new Account("Prasad", "Rajesh", 'm', "12/31/2024", 's',
-                                    2);
-        Account fac2 = new Account("Traynor", "Carol", 'f', "1/01/2024", 'c',
-                                    2, 100.1);
-        Account staff = new Account("Milbury", "Mike", 'm', "6/17/1952", 's',
-                                    3, 50000.50);
+        String[] names = new String[30];
+        names = Utilities.randomNames(30);
+        Random generator = new Random();
+        String lname, fname, bday;
+        char gender, accountType;
+        double balance;
+        Account[] currentCustomers = new Account[5];
         
-        Account[] currentCustomers = {stu1, stu2, fac1, fac2, staff};
+      //Generate 5 random students
+        for (int i = 0; i < 5; i++) {
+            lname = names[i*2];
+            fname = names[(i*2)+1];
+            gender = (generator.nextInt(2) > 0) ? 'm' : 'f';
+            bday = Utilities.generateBday();
+            accountType = (i < 3) ? 'c' : 's';
+            balance = generator.nextDouble() + generator.nextInt(100000);
+            Account tempAccount = new Account(lname, fname, gender, bday, accountType,
+                                1, balance);
+            
+            currentCustomers[i] = tempAccount;
+        }
+        //Generate 5 random staff
+        for (int i = 5; i < 10;i++) {
+            lname = names[(i*2)];
+            fname = names[(i*2) + 1];
+            gender = (generator.nextInt(2) > 0) ? 'm' : 'f';
+            bday = Utilities.generateBday();
+            accountType = (i < 3) ? 'c' : 's';
+            balance = generator.nextDouble() + generator.nextInt(100000);
+            Account tempAccount = new Account(lname, fname, gender, bday, accountType,
+                                2, balance);
+            
+            if (i == currentCustomers.length) {
+                currentCustomers = Utilities.doubleArraySize(currentCustomers);
+            }
+            currentCustomers[i] = tempAccount;
+        }
+        //Generate 5 random faculty
+        for (int i = 10; i < 15; i++) {
+            lname = names[i*2];
+            fname = names[(i*2) + 1];
+            gender = (generator.nextInt(2) > 0) ? 'm' : 'f';
+            bday = Utilities.generateBday();
+            accountType = (i < 3) ? 'c' : 's';
+            balance = generator.nextDouble() + generator.nextInt(100000);
+            Account tempAccount = new Account(lname, fname, gender, bday, accountType,
+                                3, balance);
+            
+            if (i == currentCustomers.length) {
+                currentCustomers = Utilities.doubleArraySize(currentCustomers);
+            }
+            currentCustomers[i] = tempAccount;
+        }
+        
         Scanner sc = new Scanner(System.in);
-        String rawInput;
-        String menu = "1. Display all accounts" +
+        boolean goodInput, bypass;
+        int userChoice;
+        String rawInput, menu = "1. Display all accounts" +
                     "\n2. Total number of accounts" + 
                     "\n3. Open account with initial deposit" +
                     "\n4. Open account without initial deposit" + 
@@ -31,8 +74,6 @@ public class Driver {
                     "\n9. Display savings accounts sorted by first name" +
                     "\n0. Exit\n";
         
-        boolean goodInput, bypass;
-        int userChoice;
         
         do {
             
@@ -47,14 +88,14 @@ public class Driver {
                     System.out.println("\n----------Menu----------\n");
                     System.out.println(menu);
                     System.out.println("Enter choice: ");
-
+                    
                     rawInput = sc.nextLine();
                     userChoice = Integer.parseInt(rawInput);
 
-                    if (userChoice > 0 && userChoice < 7) {
+                    if (userChoice >= 0 && userChoice < 7) {
                         goodInput = true;
                     } else {
-                        System.out.println("Please enter an integer between 1 and 6");
+                        System.out.println("Please enter an integer between 0 and 6");
                         goodInput = false;
                     }
                 } catch (java.lang.NumberFormatException e) {
@@ -70,12 +111,40 @@ public class Driver {
                     Utilities.displayAll(currentCustomers);
                     break;
                 case 2:
-                    // TODO:
-                    // Decide how to implement accountCounting()
-                    // Maybe just return 1,2,-1 and make new function for printing?
+                    int[] accountInfo = Utilities.accountCounting();
+                    String accType;
                     
+                    switch (accountInfo[0]) {
+                        case 1:
+                            accType = "checking";
+                            break;
+                        case 2:
+                            accType = "saving";
+                            break;
+                        case 3: 
+                            accType = null;
+                            bypass = true;
+                            break;
+                        case -1:
+                            accType = "-ERROR: Account class-";
+                            break;
+                        default:
+                            accType = "undefined";
+                            break;
+                    }
+                    
+                    if (!bypass)
+                        System.out.println("There are " + accountInfo[1] + " " + accType + " accounts"
+                            + " in the system.");
                     
                     break;
+                case 3:
+//                    currentCustomers = Utilities.addAccount(currentCustomers, Utilities.accountWBalance());
+                    Account newGuy = Utilities.accountWBalance();
+                    newGuy.displayAll();
+                    break;
+                case 0:
+                    System.exit(1);
                 default:
                     break;
                     
@@ -100,9 +169,11 @@ public class Driver {
                 case 6:
                     System.exit(0);
                     */
-            }
-        } while (Utilities.playAgain());
+            }       
+            
+        } while (Utilities.playAgain(bypass));
         
         sc.close();
     }
 }
+

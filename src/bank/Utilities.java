@@ -5,7 +5,10 @@
  */
 package bank;
 
+import java.io.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -14,23 +17,43 @@ import java.util.Scanner;
  */
 public class Utilities {
     
-    public static boolean playAgain() {
+    private static Scanner scan = new Scanner(System.in);
+    
+    public static String[] randomNames(int num) {
+        String[] listOfNames = new String[num];
+        Random generator = new Random();
+        int rand, lines = 0;
+        ArrayList<String> allNames = new ArrayList<String>();
+        String curLine, name;
         
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Would you like to perform another action? (Y/N)");
-        String userChoice = scan.nextLine().toLowerCase();
-        userChoice = (userChoice.length() == 0) ? "n" : userChoice;
+        try {
+            Scanner reader = new Scanner(new File("/home/alec/eclipse-workspace/cs213_Final/src/bank/" + 
+                    "baby-names.csv"));
+            
+            while (reader.hasNextLine()) {
+                curLine = reader.nextLine();
+                name = curLine.split(",")[1];
+                allNames.add(name);
+                lines++;
+            }
+            
+            for (int i = 0; i < num; i++) {
+                rand = generator.nextInt(lines);
+                listOfNames[i] = allNames.get(rand).replaceAll("\"", "");
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         
-        char choice = userChoice.charAt(0);
-        
-        return choice == 'y';
-        
+        return listOfNames;
     }
     
     public static void displayAll(Account[] people) {
         
         for (Account acct : people) {
-            System.out.println("\n\n" + acct.displayAll());
+            if (acct != null) {
+                System.out.println("\n\n" + acct.displayAll());
+            }
         }
         
     }
@@ -58,13 +81,12 @@ public class Utilities {
     public static String getValidAccount() {
         
         boolean valid = false;
-        Scanner sc = new Scanner(System.in);
         String rawInput, account = "";
         
         while (!valid) {
             try {
                 System.out.println("Enter account number: ");
-                rawInput = sc.nextLine();
+                rawInput = scan.nextLine();
                 Integer.parseInt(rawInput);
 
                 if (rawInput.length() == 5) {
@@ -90,12 +112,11 @@ public class Utilities {
         double returnDouble = 0.0;
         boolean valid = false;
         String rawInput, convertToMoney;
-        Scanner sc = new Scanner(System.in);
         
         while (!valid) {
             try {
                 System.out.println(message);
-                rawInput = sc.nextLine();
+                rawInput = scan.nextLine();
                 returnDouble = Double.parseDouble(rawInput);
                 valid = true;                        
             } catch (java.lang.NumberFormatException e) {
@@ -140,12 +161,12 @@ public class Utilities {
         }
     }
 
-    public static int accountCounting() {
+    public static int[] accountCounting() {
         
         boolean goodInput = false;
         int secondChoice = 0;
+        int[] returnList = new int[2];
         String raw;
-        Scanner sc = new Scanner(System.in);
         
         while (!goodInput) {
             try {
@@ -156,7 +177,7 @@ public class Utilities {
                                 "\n 3. Back to main menu" +
                                 "\n\nChoice: ");
                 
-                raw = sc.nextLine();
+                raw = scan.nextLine();
                 secondChoice = Integer.parseInt(raw);
                 
                 if (secondChoice > 0 && secondChoice < 4) {
@@ -171,16 +192,181 @@ public class Utilities {
             }
         }
         
-        sc.close();
-        
+                
         if (secondChoice == 1) {
-            return Account.getNumOfCheckings();
+            returnList[1] = Account.getNumOfCheckings();
         } else if (secondChoice == 2) {
-            return Account.getNumOfSavings();
+            returnList[1] = Account.getNumOfSavings();
         } else {
-            return -1;
+            returnList[1] = -1;
         }
+        returnList[0] = secondChoice;
         
+        return returnList;
     }
     
+    public static boolean playAgain(boolean bypass) {
+        if (!bypass) {
+            System.out.println("Would you like to perform another action? (Y/N)");
+            String playAgain = scan.nextLine().toLowerCase();
+            playAgain = (playAgain.length() == 0) ? "n" : playAgain;
+            
+            char choice = playAgain.charAt(0);
+            
+            return (choice == 'y');
+        } else {
+            return true;
+        }
+    }
+    
+    public static String generateBday() {
+        String bday, dayString, monthString;
+        Random random = new Random();
+        Integer month, day, year;
+        month = random.nextInt(11) + 1;
+        year = random.nextInt(100) + 1903;
+        
+        //check for months with 31 days
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8
+                || month == 10 || month == 12) {
+            day = random.nextInt(30) + 1;
+        } else if (month == 2) { //check for Feb.
+            day = (year % 4 == 0) ? random.nextInt(27) + 1 : random.nextInt(28) + 1;
+        } else {//months left over have 30 days
+            day = random.nextInt(29) + 1;
+        }
+        
+        dayString = (day < 10) ? "0" + day.toString() : day.toString();
+        monthString = (month < 10) ? "0" + month.toString() : month.toString();
+        bday = monthString + "/" + dayString + "/" + year.toString();
+        
+        return bday;
+    }
+    
+    public static Account[] doubleArraySize(Account[] currentList) {
+        Account[] newList = new Account[currentList.length * 2];
+        
+        for (int i = 0; i < currentList.length; i++) {
+            newList[i] = currentList[i];
+        }
+        
+        return newList;
+    }
+
+    public static Account accountWBalance() {
+        boolean goodChar = false, goodBday = false, validPerson = false, validBalance = false;;
+        char userGender, accType;
+        String bday, accTypeString, personType, balanceString;
+        int day, month, year, person = 0;
+        double balance = 0;
+        
+        //Get first and last name
+        System.out.println("Enter first name: ");
+        String fName = scan.nextLine();
+        System.out.println("Enter last name: ");
+        String lName = scan.nextLine();
+        
+        //Get gender
+        do {
+            System.out.println("Enter gender (m/f): ");
+            userGender = scan.nextLine().toLowerCase().charAt(0);
+            
+            if (userGender == 'm' || userGender == 'f') {
+                goodChar = true;
+            } else {
+                System.out.println("Please enter 'm' or 'f'...");
+                goodChar = false;
+            }
+        } while (!goodChar);
+        
+        //Get birthday
+        do {
+            System.out.println("Please enter valid birthday in format (MM/DD/YYYY): ");
+            bday = scan.nextLine();
+            
+            if (bday.matches("\\d{2}[/]\\d{2}[/]\\d{4}")) {
+                month = Integer.parseInt(bday.substring(0,2));
+                day = Integer.parseInt(bday.substring(3,5));
+                year = Integer.parseInt(bday.substring(6,10));
+                if ((month > 0 && month < 13) && (day > 0 && day < 32) && year > 1900) {
+                    goodBday = true;
+                    
+                    //check for Feb. special days
+                    if (month == 2 && day == 29) {
+                        if ((year % 4) != 0) { //leap year
+                            goodBday = false;
+                        }
+                    } else if (month == 2 && day > 28) {
+                        goodBday = false;
+                    }
+                    
+                    //check for 30 day months
+                    if (month == 4 || month == 6 || month == 9 || month == 11) {
+                        if (day > 30) {
+                            goodBday = false;
+                        }
+                    }
+                }
+                
+            } else {
+                goodBday = false;
+            }
+        } while (!goodBday);
+        
+        //Get account type
+        do {
+            System.out.println("Enter account type (checking/saving): ");
+            accTypeString = scan.nextLine();
+            accTypeString.toLowerCase();
+            accType = accTypeString.charAt(0);
+            if (accType == 'c' || accType == 's') {
+                goodChar = true;
+            } else {
+                System.out.println("Account type must start with 'c' or 's'...");
+                goodChar = false;
+            }
+        } while (!goodChar);
+        
+        //Get person type
+        do {
+            System.out.println("What is your status:" +
+                            "\n1. Student" +
+                            "\n2. Staff" +
+                            "\n3. Faculty" +
+                            "\n\nChoice (1-3): ");
+            personType = scan.nextLine();
+            try {
+                person = Integer.parseInt(personType);
+                if (person > 0 && person < 3) {
+                    validPerson = true;
+                } else {
+                    System.out.println("Must enter value between 1 and 3...");
+                    validPerson = false;
+                }
+            } catch (java.lang.NumberFormatException e) {
+                System.out.println("Must be an integer...");
+                validPerson = false;
+            }
+        } while (!validPerson);
+        
+        //Get initial balance
+        do {
+            System.out.println("Enter initial balance for account: ");
+            balanceString = scan.nextLine();
+            try {
+                balance = Double.parseDouble(balanceString);
+                if (balance > 0) {
+                    validBalance = true;
+                } else {
+                    System.out.println("Must enter positive balance...");
+                    validBalance = false;
+                }
+            } catch (java.lang.NumberFormatException e) {
+                System.out.println("Must enter number value...");
+                validBalance = false;
+            }
+        } while (!validBalance);
+        
+        return new Account(lName, fName, userGender, bday, accType, person, balance);
+    }
 }

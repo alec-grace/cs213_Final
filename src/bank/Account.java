@@ -152,7 +152,7 @@ public class Account {
                 "\nSex: " + this.sex + "\nBirthdate: " + this.dob +  
                 "\nSocial Security Number: " + this.protectedSSN + 
                 "\nAccount Number: " + this.accountNum + "\nAccount type: " + 
-                account + "\nPerson: " + personT + "\nBalance: " + this.balance;
+                account + "\nPerson: " + personT + "\nBalance: $" + df.format(this.balance);
         
         return info;
     }
