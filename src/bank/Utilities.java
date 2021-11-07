@@ -29,6 +29,8 @@ public class Utilities {
         String curLine, name;
         
         try {
+            //Must enter complete file path of wherever the project is being compiled... 
+            //ask about how to make this universal next class
             Scanner reader = new Scanner(new File("/home/alec/eclipse-workspace/cs213_Final/src/bank/" + 
                     "baby-names.csv"));
             
