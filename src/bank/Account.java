@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 /**
  *
  * @author Alec Grace && Kilian Hammersmith
+ * 
  */
 public class Account {
     
