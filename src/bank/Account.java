@@ -191,6 +191,10 @@ public class Account {
         return this.accountType;
     }
     
+    public String getLastName() {
+        return this.lastName;
+    }
+    
     //Class Variable Getters
     
     public static int getNumOfAccounts() {

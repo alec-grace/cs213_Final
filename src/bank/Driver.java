@@ -34,7 +34,7 @@ public class Driver {
             gender = (generator.nextInt(2) > 0) ? 'm' : 'f';
             bday = Utilities.generateBday();
             accountType = (i < 8) ? 'c' : 's';
-            balance = generator.nextDouble() + generator.nextInt(1000);
+            balance = generator.nextDouble() + generator.nextInt(10000);
             Account tempAccount = new Account(lname, fname, gender, bday, accountType,
                                 2, balance);
             
@@ -47,7 +47,7 @@ public class Driver {
             gender = (generator.nextInt(2) > 0) ? 'm' : 'f';
             bday = Utilities.generateBday();
             accountType = (i < 13) ? 'c' : 's';
-            balance = generator.nextDouble() + generator.nextInt(1000);
+            balance = generator.nextDouble() + generator.nextInt(10000);
             Account tempAccount = new Account(lname, fname, gender, bday, accountType,
                                 3, balance);
             
@@ -86,10 +86,10 @@ public class Driver {
                     rawInput = sc.nextLine();
                     userChoice = Integer.parseInt(rawInput);
 
-                    if (userChoice >= 0 && userChoice < 7) {
+                    if (userChoice >= 0 && userChoice < 10) {
                         goodInput = true;
                     } else {
-                        System.out.println("Please enter an integer between 0 and 6");
+                        System.out.println("Please enter an integer between 0 and 9");
                         goodInput = false;
                     }
                 } catch (java.lang.NumberFormatException e) {
@@ -117,7 +117,7 @@ public class Driver {
                         case 2:
                             accType = "saving";
                             break;
-                        case 3: 
+                        case 0: 
                             accType = null;
                             bypass = true;
                             break;
@@ -155,6 +155,42 @@ public class Driver {
                     break;
                 //Display all employee (faculty & staff) accounts with over $5000
                 case 7:
+                    System.out.println(Utilities.getHighEmployeeAccounts(currentCustomers));
+                    break;
+                //Search for a specific account by last name (linear search)
+                case 8:
+                    Account target = Utilities.searchLinearLastName(currentCustomers);
+                    if (target != null) {
+                        int nextChoice = Utilities.accountOptions();
+                        switch (nextChoice) {
+                            case 1:
+                                System.out.println("Current balance: $" + Utilities.df.format(target.getCurrentBalance()));
+                                break;
+                            case 2:
+                                double withdrawAmount = Utilities.getUserDouble("Enter amount to withdraw: ");
+                                Utilities.makeWithdrawal(target, withdrawAmount);
+                                break;
+                            case 3:
+                                double depositAmount = Utilities.getUserDouble("Enter amount to deposit: ");
+                                Utilities.makeDeposit(target, depositAmount);
+                                break;
+                            case 4:
+                                target.addInterest();
+                                System.out.println("Successfully added interest to " + target.getLastName() + "'s account.");
+                                break;
+                            case 5:
+                                Utilities.removeAccount(currentCustomers, target);
+                                System.out.println("Successfully removed " + target.getLastName() + "'s account.");
+                                break;
+                            case 0:
+                                bypass = true;
+                                continue;
+                           default:
+                                System.out.println("Error with \"nextChoice\" variable...");
+                        }
+                    } else {
+                        System.out.println("That customer does not exist in our database.");
+                    }
                     break;
                 //Terminate the program
                 case 0:

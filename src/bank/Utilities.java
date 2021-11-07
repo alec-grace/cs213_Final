@@ -19,6 +19,8 @@ public class Utilities {
     
     private static Scanner scan = new Scanner(System.in);
     
+    protected final static DecimalFormat df = new DecimalFormat("0.00");
+    
     public static String[] randomNames(int num) {
         String[] listOfNames = new String[num];
         Random generator = new Random();
@@ -64,20 +66,37 @@ public class Utilities {
         
         boolean successful = false;
         
-        for (Account acct : people) {
-            if (accNum.equals(acct.getAccountNum())) {
-                acct.depositAmount(deposit);
-                successful = true;
+        if (deposit > 0) {
+            for (Account acct : people) {
+                if (accNum.equals(acct.getAccountNum())) {
+                    acct.depositAmount(deposit);
+                    successful = true;
+                }
             }
+            
+            if (successful) {
+                System.out.println("Successfully deposited $" + deposit + 
+                        " to account number: " + accNum);
+            } else {
+                System.out.println("Account number: " + accNum + 
+                        " does not exist in our database.");
+            }
+        } else {
+            System.out.println("Must enter positive value for deposit.");
         }
         
-        if (successful) {
+    }
+    
+    public static void makeDeposit(Account person, double deposit) {
+        
+        if (deposit > 0) {
+            person.depositAmount(deposit);
             System.out.println("Successfully deposited $" + deposit + 
-                    " to account number: " + accNum);
+                    " to " + person.getLastName() + "'s account.");
         } else {
-            System.out.println("Account number: " + accNum + 
-                    " does not exist in our database.");
+            System.out.println("Must enter positive value for deposit.");
         }
+        
     }
     
     public static String getValidAccount() {
@@ -107,8 +126,6 @@ public class Utilities {
         return account;
     }
     
-    private final static DecimalFormat df = new DecimalFormat("0.00");
-    
     public static double getUserDouble(String message) {
         
         double returnDouble = 0.0;
@@ -137,23 +154,38 @@ public class Utilities {
         
         boolean successful = false;
         
-        for (Account acct : people) {
-            if (accNum.equals(acct.getAccountNum())) {
-                if (withdrawal <= acct.getCurrentBalance()) {
-                    acct.withdrawAmount(withdrawal);
-                    System.out.println("Successfully withdrew $" + df.format(withdrawal) +
-                            " from account number: " + accNum);
-                } else {
-                    System.out.println("Sorry, there is not enough money in account number: " + 
-                            accNum + " to withdraw $" + df.format(withdrawal) + ".");
+        if (withdrawal > 0) {
+            for (Account acct : people) {
+                if (accNum.equals(acct.getAccountNum())) {
+                    if (withdrawal <= acct.getCurrentBalance()) {
+                        acct.withdrawAmount(withdrawal);
+                        System.out.println("Successfully withdrew $" + df.format(withdrawal) +
+                                " from account number: " + accNum);
+                    } else {
+                        System.out.println("Sorry, there is not enough money in account number: " + 
+                                accNum + " to withdraw $" + df.format(withdrawal) + ".");
+                    }
+                    successful = true;
                 }
-                successful = true;
             }
+            
+            if (!successful) {
+                System.out.println("Account number: " + accNum + 
+                        " does not exist in our database.");
+            }
+        } else {
+            System.out.println("Must enter positive value to withdraw.");
         }
+    }
+    
+    public static void makeWithdrawal(Account person, double withdraw) {
         
-        if (!successful) {
-            System.out.println("Account number: " + accNum + 
-                    " does not exist in our database.");
+        if (withdraw > 0) {
+            person.withdrawAmount(withdraw);
+            System.out.println("Successfully withdrew $" + withdraw +
+                    " to " + person.getLastName() + "'s account.");
+        } else {
+            System.out.println("Must enter positive value to withdraw.");
         }
     }
 
@@ -177,16 +209,16 @@ public class Utilities {
                 System.out.println("Select account type to count: " +
                                 "\n 1. Checking" +
                                 "\n 2. Saving" + 
-                                "\n 3. Back to main menu" +
+                                "\n 0. Back to main menu" +
                                 "\n\nChoice: ");
                 
                 raw = scan.nextLine();
                 secondChoice = Integer.parseInt(raw);
                 
-                if (secondChoice > 0 && secondChoice < 4) {
+                if (secondChoice >= 0 && secondChoice < 3) {
                     goodInput = true;
                 } else {
-                    System.out.println("Please enter an integer between 1 and 3");
+                    System.out.println("Please enter an integer between 0 and 2");
                     goodInput = false;
                 }
                 
@@ -532,6 +564,84 @@ public class Utilities {
             return "No low balance student accounts.";
         } else {
             return lowAccounts;
+        }
+    }
+    
+    public static String getHighEmployeeAccounts(Account[] people) {
+        String highAccounts = "";
+        
+        for (Account person : people) {
+            if (person != null) {
+                if (person.getPersonType() > 1 && person.getCurrentBalance() > 5000)
+                    highAccounts += "\n" + person.displayAll() + "\n\n";
+            }
+        }
+        
+        if (highAccounts.compareTo("") == 0) {
+            return "No employee accounts with balance > $5000.";
+        } else {
+            return highAccounts;
+        }
+    }
+
+    public static Account searchLinearLastName(Account[] people) {
+        Account foundTarget = null;
+        System.out.println("Enter last name of customer to search for: ");
+        String lName = scan.nextLine();
+        
+        for (Account person : people) {
+            if (person != null) {
+                if (lName.compareToIgnoreCase(person.getLastName()) == 0)
+                    foundTarget = person;
+            }
+        }
+        
+        return foundTarget;
+    }
+
+    public static int accountOptions() {
+        int choice = 0;
+        String rawChoice;
+        boolean goodChoice = false, goodRaw = false;
+        
+        System.out.println("\nWhat operation would you like to perform on this account?" +
+                        "\n\n1. Check balance" +
+                        "\n2. Withdraw money" +
+                        "\n3. Deposit money" +
+                        "\n4. Add interest" + 
+                        "\n5. Close (delete) account" +
+                        "\n0. Back to main menu" +
+                        "\n\nEnter Choice: ");
+         do {   
+            try {
+                do {
+                    rawChoice = scan.nextLine();
+                    choice = Integer.parseInt(rawChoice);
+                    
+                    if (choice >=0 && choice < 6) {
+                        goodChoice = true;
+                        goodRaw = true;
+                    } else {
+                        System.out.println("Please enter integer between 0 and 5");
+                        goodChoice = false;
+                    }
+                } while (!goodChoice);
+            } catch (java.lang.NumberFormatException e) {
+                System.out.println("Please enter Integer...");
+                goodRaw = false;
+            }
+         } while (!goodRaw);
+         
+        return choice;
+    }
+
+    public static void removeAccount(Account[] people, Account accountForRemoval) {
+        
+        for (int i = 0; i < people.length; i++) {
+            if (people[i] != null && 
+                    people[i].getAccountNum() == accountForRemoval.getAccountNum()) {
+                people[i] = null;
+            }
         }
     }
 }
