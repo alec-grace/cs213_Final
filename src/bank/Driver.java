@@ -21,7 +21,7 @@ public class Driver {
             gender = (generator.nextInt(2) > 0) ? 'm' : 'f';
             bday = Utilities.generateBday();
             accountType = (i < 3) ? 'c' : 's';
-            balance = generator.nextDouble() + generator.nextInt(100000);
+            balance = generator.nextDouble() + generator.nextInt(1000);
             Account tempAccount = new Account(lname, fname, gender, bday, accountType,
                                 1, balance);
             
@@ -33,15 +33,12 @@ public class Driver {
             fname = names[(i*2) + 1];
             gender = (generator.nextInt(2) > 0) ? 'm' : 'f';
             bday = Utilities.generateBday();
-            accountType = (i < 3) ? 'c' : 's';
-            balance = generator.nextDouble() + generator.nextInt(100000);
+            accountType = (i < 8) ? 'c' : 's';
+            balance = generator.nextDouble() + generator.nextInt(1000);
             Account tempAccount = new Account(lname, fname, gender, bday, accountType,
                                 2, balance);
             
-            if (i == currentCustomers.length) {
-                currentCustomers = Utilities.doubleArraySize(currentCustomers);
-            }
-            currentCustomers[i] = tempAccount;
+            currentCustomers = Utilities.safeAdd(currentCustomers, tempAccount);
         }
         //Generate 5 random faculty
         for (int i = 10; i < 15; i++) {
@@ -49,15 +46,12 @@ public class Driver {
             fname = names[(i*2) + 1];
             gender = (generator.nextInt(2) > 0) ? 'm' : 'f';
             bday = Utilities.generateBday();
-            accountType = (i < 3) ? 'c' : 's';
-            balance = generator.nextDouble() + generator.nextInt(100000);
+            accountType = (i < 13) ? 'c' : 's';
+            balance = generator.nextDouble() + generator.nextInt(1000);
             Account tempAccount = new Account(lname, fname, gender, bday, accountType,
                                 3, balance);
             
-            if (i == currentCustomers.length) {
-                currentCustomers = Utilities.doubleArraySize(currentCustomers);
-            }
-            currentCustomers[i] = tempAccount;
+            currentCustomers = Utilities.safeAdd(currentCustomers, tempAccount);
         }
         
         Scanner sc = new Scanner(System.in);
@@ -68,7 +62,7 @@ public class Driver {
                     "\n3. Open account with initial deposit" +
                     "\n4. Open account without initial deposit" + 
                     "\n5. Add interest to all accounts" + 
-                    "\n6. Display low balance accounts (balance < $100)" +
+                    "\n6. Display low balance student accounts (balance < $100)" +
                     "\n7. Display all employee accounts with balance > $5000" + 
                     "\n8. Search for account by last name" +
                     "\n9. Display savings accounts sorted by first name" +
@@ -107,9 +101,11 @@ public class Driver {
 
             switch (userChoice) {
 
+                //Display all customers and their information
                 case 1:
                     Utilities.displayAll(currentCustomers);
                     break;
+                //Display the number of a specific account (user's choice)
                 case 2:
                     int[] accountInfo = Utilities.accountCounting();
                     String accType;
@@ -138,11 +134,29 @@ public class Driver {
                             + " in the system.");
                     
                     break;
+                //Add a new customer and give them an initial balance
                 case 3:
-//                    currentCustomers = Utilities.addAccount(currentCustomers, Utilities.accountWBalance());
-                    Account newGuy = Utilities.accountWBalance();
-                    newGuy.displayAll();
+                    Account newBalanceCust = Utilities.accountWBalance();
+                    Utilities.safeAdd(currentCustomers, newBalanceCust);
                     break;
+                //Add a new customer without initial balance
+                case 4:
+                    Account noBalanceCust = Utilities.accountWOBalance();
+                    Utilities.safeAdd(currentCustomers, noBalanceCust);
+                    break;
+                // Add interest to all accounts (2%)
+                case 5:
+                    Utilities.addInterestToAll(currentCustomers);
+                    System.out.println("Completed.");
+                    break;
+                //Display all student accounts with under $100
+                case 6:
+                    System.out.println(Utilities.getLowStudentAccounts(currentCustomers));
+                    break;
+                //Display all employee (faculty & staff) accounts with over $5000
+                case 7:
+                    break;
+                //Terminate the program
                 case 0:
                     System.exit(1);
                 default:

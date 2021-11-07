@@ -37,6 +37,8 @@ public class Utilities {
                 lines++;
             }
             
+            reader.close();
+            
             for (int i = 0; i < num; i++) {
                 rand = generator.nextInt(lines);
                 listOfNames[i] = allNames.get(rand).replaceAll("\"", "");
@@ -44,7 +46,7 @@ public class Utilities {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        
+                
         return listOfNames;
     }
     
@@ -157,7 +159,8 @@ public class Utilities {
 
     public static void addInterestToAll(Account[] people){
         for(int i = 0 ; i < people.length; i++){
-            people[i].addInterest();
+            if (people[i] != null)
+                people[i].addInterest();
         }
     }
 
@@ -254,17 +257,28 @@ public class Utilities {
     }
 
     public static Account accountWBalance() {
-        boolean goodChar = false, goodBday = false, validPerson = false, validBalance = false;;
+        boolean goodName = false, goodChar = false, goodBday = false, 
+                validPerson = false, validBalance = false;
         char userGender, accType;
-        String bday, accTypeString, personType, balanceString;
+        String bday, accTypeString, personType, balanceString, lName, fName;
         int day, month, year, person = 0;
         double balance = 0;
         
         //Get first and last name
-        System.out.println("Enter first name: ");
-        String fName = scan.nextLine();
-        System.out.println("Enter last name: ");
-        String lName = scan.nextLine();
+        do {
+            System.out.println("Enter first name: ");
+            fName = scan.nextLine();
+            if (fName.length() > 0)
+                goodName = true;
+        } while (!goodName);
+        
+        goodName = false;
+        do {
+            System.out.println("Enter last name: ");
+            lName = scan.nextLine();
+            if (lName.length() > 0) 
+                goodName = true;
+        } while (!goodName);
         
         //Get gender
         do {
@@ -288,7 +302,144 @@ public class Utilities {
                 month = Integer.parseInt(bday.substring(0,2));
                 day = Integer.parseInt(bday.substring(3,5));
                 year = Integer.parseInt(bday.substring(6,10));
-                if ((month > 0 && month < 13) && (day > 0 && day < 32) && year > 1900) {
+                
+                // make sure valid month, day, and year (age has to be over 18 and under 121)
+                if ((month > 0 && month < 13) && (day > 0 && day < 32) && (year > 1900 && year < 2004)) {
+                    goodBday = true;
+                    
+                    //check for Feb. special days
+                    if (month == 2 && day == 29) {
+                        if ((year % 4) != 0) { //leap year
+                            goodBday = false;
+                        }
+                    } else if (month == 2 && day > 28) {
+                        goodBday = false;
+                    }
+                    
+                    //check for 30 day months
+                    if (month == 4 || month == 6 || month == 9 || month == 11) {
+                        if (day > 30) {
+                            goodBday = false;
+                        }
+                    }
+                }
+                
+            } else {
+                goodBday = false;
+            }
+        } while (!goodBday);
+        
+        //Get account type
+        do {
+            System.out.println("Enter account type (checking/saving): ");
+            accTypeString = scan.nextLine();
+            accTypeString.toLowerCase();
+            accType = accTypeString.charAt(0);
+            
+            try {
+                if (accType == 'c' || accType == 's') {
+                    goodChar = true;
+                } else {
+                    System.out.println("Account type must start with 'c' or 's'...");
+                    goodChar = false;
+                }
+            } catch (java.lang.StringIndexOutOfBoundsException e) {
+                // TODO Auto-generated catch block
+                System.out.println("Must enter some input...");
+            }
+        } while (!goodChar);
+        
+        //Get person type
+        do {
+            System.out.println("What is your status:" +
+                            "\n1. Student" +
+                            "\n2. Staff" +
+                            "\n3. Faculty" +
+                            "\n\nChoice (1-3): ");
+            personType = scan.nextLine();
+            try {
+                person = Integer.parseInt(personType);
+                if (person > 0 && person < 4) {
+                    validPerson = true;
+                } else {
+                    System.out.println("Must enter value between 1 and 3...");
+                    validPerson = false;
+                }
+            } catch (java.lang.NumberFormatException e) {
+                System.out.println("Must be an integer...");
+                validPerson = false;
+            }
+        } while (!validPerson);
+        
+        //Get initial balance
+        do {
+            System.out.println("Enter initial balance for account: ");
+            balanceString = scan.nextLine();
+            try {
+                balance = Double.parseDouble(balanceString);
+                if (balance > 0) {
+                    validBalance = true;
+                } else {
+                    System.out.println("Must enter positive balance...");
+                    validBalance = false;
+                }
+            } catch (java.lang.NumberFormatException e) {
+                System.out.println("Must enter number value...");
+                validBalance = false;
+            }
+        } while (!validBalance);
+        
+        return new Account(lName, fName, userGender, bday, accType, person, balance);
+    }
+    
+    public static Account accountWOBalance() {
+        boolean goodName = false, goodChar = false, goodBday = false, 
+                validPerson = false;
+        char userGender, accType;
+        String bday, accTypeString, personType, lName, fName;
+        int day, month, year, person = 0;
+        
+        //Get first and last name
+        do {
+            System.out.println("Enter first name: ");
+            fName = scan.nextLine();
+            if (fName.length() > 0)
+                goodName = true;
+        } while (!goodName);
+        
+        goodName = false;
+        do {
+            System.out.println("Enter last name: ");
+            lName = scan.nextLine();
+            if (lName.length() > 0) 
+                goodName = true;
+        } while (!goodName);
+        
+        //Get gender
+        do {
+            System.out.println("Enter gender (m/f): ");
+            userGender = scan.nextLine().toLowerCase().charAt(0);
+            
+            if (userGender == 'm' || userGender == 'f') {
+                goodChar = true;
+            } else {
+                System.out.println("Please enter 'm' or 'f'...");
+                goodChar = false;
+            }
+        } while (!goodChar);
+        
+        //Get birthday
+        do {
+            System.out.println("Please enter valid birthday in format (MM/DD/YYYY): ");
+            bday = scan.nextLine();
+            
+            if (bday.matches("\\d{2}[/]\\d{2}[/]\\d{4}")) {
+                month = Integer.parseInt(bday.substring(0,2));
+                day = Integer.parseInt(bday.substring(3,5));
+                year = Integer.parseInt(bday.substring(6,10));
+                
+                // make sure valid month, day, and year (age has to be over 18 and under 121)
+                if ((month > 0 && month < 13) && (day > 0 && day < 32) && (year > 1900 && year < 2004)) {
                     goodBday = true;
                     
                     //check for Feb. special days
@@ -337,7 +488,7 @@ public class Utilities {
             personType = scan.nextLine();
             try {
                 person = Integer.parseInt(personType);
-                if (person > 0 && person < 3) {
+                if (person > 0 && person < 4) {
                     validPerson = true;
                 } else {
                     System.out.println("Must enter value between 1 and 3...");
@@ -349,24 +500,38 @@ public class Utilities {
             }
         } while (!validPerson);
         
-        //Get initial balance
-        do {
-            System.out.println("Enter initial balance for account: ");
-            balanceString = scan.nextLine();
-            try {
-                balance = Double.parseDouble(balanceString);
-                if (balance > 0) {
-                    validBalance = true;
-                } else {
-                    System.out.println("Must enter positive balance...");
-                    validBalance = false;
-                }
-            } catch (java.lang.NumberFormatException e) {
-                System.out.println("Must enter number value...");
-                validBalance = false;
-            }
-        } while (!validBalance);
+        return new Account(lName, fName, userGender, bday, accType, person);
+    }
+    
+    public static Account[] safeAdd(Account[] originalList, Account newAcc) {
         
-        return new Account(lName, fName, userGender, bday, accType, person, balance);
+        for (int i = 0; i < originalList.length; i++) {
+            if (originalList[i] == null) {
+                originalList[i] = newAcc;
+                return originalList;
+            }
+        }
+        
+        originalList = doubleArraySize(originalList);
+        return safeAdd(originalList, newAcc);
+        
+    }
+
+    public static String getLowStudentAccounts(Account[] people) {
+        String lowAccounts = "";
+        
+        for (Account person : people) {
+            if (person != null) {
+                if (person.getCurrentBalance() < 100 && person.getPersonType() == 1) {
+                    lowAccounts += "\n" + person.displayAll() + "\n\n";
+                }
+            }
+        }
+
+        if (lowAccounts.compareTo("") == 0) {
+            return "No low balance student accounts.";
+        } else {
+            return lowAccounts;
+        }
     }
 }

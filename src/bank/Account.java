@@ -40,7 +40,7 @@ public class Account {
         numOfAccounts++;
         
         if (accountType == 'c') {
-            numOfCheckings ++;
+            numOfCheckings++;
         } else if (accountType == 's') {
             numOfSavings++;
         }
@@ -64,7 +64,7 @@ public class Account {
         numOfAccounts++;
         
         if (accountType == 'c') {
-            numOfCheckings ++;
+            numOfCheckings++;
         } else if (accountType == 's') {
             numOfSavings++;
         }
@@ -131,7 +131,7 @@ public class Account {
     
     public String displayAll() {
         
-        String account = (this.accountType == 'c') ? "checking" : "saving";
+        String account = (this.accountType == 'c') ? "Checking" : "Saving";
         String personT;
         
         switch (this.personType) {
