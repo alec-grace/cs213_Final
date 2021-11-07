@@ -195,6 +195,9 @@ public class Account {
         return this.lastName;
     }
     
+    public String getFirstName() {
+        return this.firstName;
+    }
     //Class Variable Getters
     
     public static int getNumOfAccounts() {

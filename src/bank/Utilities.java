@@ -644,4 +644,29 @@ public class Utilities {
             }
         }
     }
+
+    public static void bubbleSortAccounts(Account[] people) {
+        
+        int end = people.length - 1;
+        Account tempAccount;
+        boolean bypass = false;
+        
+        for (int i = 0; i < people.length - 1; i++) {
+            for (int j = 0; j < end; j++) {
+                bypass = false;
+                if (people[j+1] != null && 
+                        people[j].getFirstName().compareToIgnoreCase(people[j+1].getFirstName()) > 0) {
+                    tempAccount = people[j+1];
+                    people[j+1] = people[j];
+                    people[j] = tempAccount;
+                } else if (people[j+1] == null) {
+                    bypass = true;
+                }
+            }
+
+            if (!bypass) {
+                end--;
+            }
+        }
+    }
 }

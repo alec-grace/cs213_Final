@@ -192,33 +192,17 @@ public class Driver {
                         System.out.println("That customer does not exist in our database.");
                     }
                     break;
+                //Display all saving accounts by bubble sort on first name
+                case 9:
+                    Utilities.bubbleSortAccounts(currentCustomers);
+                    Utilities.displayAll(currentCustomers);
+                    break;
                 //Terminate the program
                 case 0:
                     System.exit(1);
                 default:
                     break;
                     
-                    
-                /*
-                case 2:
-                    String depositAccount = Utilities.getValidAccount();
-                    double deposit = Utilities.getUserDouble("Enter an amount to deposit: " );
-                    Utilities.makeDeposit(currentCustomers, depositAccount, deposit);
-                    break;                    
-                case 3:
-                    String withdrawAccount = Utilities.getValidAccount();
-                    double withdrawal = Utilities.getUserDouble("Enter an amount to withdraw: ");
-                    Utilities.makeWithdrawal(currentCustomers, withdrawAccount, withdrawal);
-                    break;
-                case 4:
-                    Utilities.addInterestToAll(currentCustomers);
-                    break;
-                case 5:
-                    Utilities.numOfAccounts(currentCustomers);
-                    break;
-                case 6:
-                    System.exit(0);
-                    */
             }       
             
         } while (Utilities.playAgain(bypass));
