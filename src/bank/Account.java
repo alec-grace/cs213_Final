@@ -18,7 +18,7 @@ public class Account {
     private final String ssn;
     private final String protectedSSN;
     private final String accountNum;
-    private final char accountType;
+    private char accountType;
     private final int personType;
     private double balance;
     private static int numOfAccounts = 0;
@@ -205,6 +205,10 @@ public class Account {
     
     public String getFirstName() {
         return this.firstName;
+    }
+    
+    public void switchAccountType() {
+        this.accountType = (this.accountType == 'c') ? 's' : 'c';
     }
     
     //Class Variable Setters

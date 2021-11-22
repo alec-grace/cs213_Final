@@ -72,7 +72,8 @@ public class Driver {
                     "\n7. Display all employee accounts with balance > $5000" + 
                     "\n8. Search for account by last name" +
                     "\n9. Display savings accounts sorted by first name" +
-                    "\n10. Display all accounts sorted by account number" +
+                    "\n10 Search for accound by first name" + 
+                    "\n11. Display all accounts sorted by account number" +
                     "\n0. Exit\n";
         
         
@@ -93,10 +94,10 @@ public class Driver {
                     rawInput = sc.nextLine();
                     userChoice = Integer.parseInt(rawInput);
 
-                    if (userChoice >= 0 && userChoice <= 10) {
+                    if (userChoice >= 0 && userChoice <= 11) {
                         goodInput = true;
                     } else {
-                        System.out.println("Please enter an integer between 0 and 10");
+                        System.out.println("Please enter an integer between 0 and 11");
                         goodInput = false;
                     }
                 } catch (java.lang.NumberFormatException e) {
@@ -209,8 +210,60 @@ public class Driver {
                 case 9:
                     Utilities.bubbleSortAccounts(currentCustomers);
                     break;
-                //Selection sort by first name
+                //Binary search by first name
                 case 10:
+                    System.out.println("Enter first name to search for: ");
+                    String searchName = sc.nextLine();
+                    
+                    Utilities.bubbleSortFName(currentCustomers);
+                    
+                    long start = System.nanoTime();
+                    Account searchTarget = Utilities.binarySearchFName(searchName, currentCustomers, 0, currentCustomers.length - 1);
+                    long end = System.nanoTime();
+                    long total = end - start;
+                    
+                    System.out.println("Total search time: " + total + " nanoseconds.");
+                    
+                    if (searchTarget != null) {
+                        int nextChoice = Utilities.accountOptions2();
+                        switch (nextChoice) {
+                        //Check balance
+                            case 1:
+                                System.out.println("Current balance: $" + Utilities.df.format(searchTarget.getCurrentBalance()));
+                                break;
+                        //Withdraw money        
+                            case 2:
+                                double withdrawAmount = Utilities.getUserDouble("Enter amount to withdraw: ");
+                                Utilities.makeWithdrawal(searchTarget, withdrawAmount);
+                                break;
+                        //Deposit money
+                            case 3:
+                                double depositAmount = Utilities.getUserDouble("Enter amount to deposit: ");
+                                Utilities.makeDeposit(searchTarget, depositAmount);
+                                break;
+                        //Change account type
+                            case 4:
+                                searchTarget.switchAccountType();
+                                System.out.println("Change applied.");
+                                break;
+                        //Delete account 
+                            case 5:
+                                Utilities.removeAccount(currentCustomers, searchTarget);
+                                System.out.println("Successfully removed " + searchTarget.getLastName() + "'s account.");
+                                break;
+                        //Back to main menu        
+                            case 0:
+                                bypass = true;
+                                continue;
+                           default:
+                                System.out.println("Error with \"nextChoice\" variable...");
+                        }
+                    } else {
+                        System.out.println("That customer does not exist in our database.");
+                    }
+                    break;
+                //Selection sort by account number
+                case 11:
                     Utilities.selectionSortAccounts(currentCustomers);
                     Thread.sleep(2500);
                     Utilities.displayAll(currentCustomers);

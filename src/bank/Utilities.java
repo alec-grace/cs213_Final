@@ -16,6 +16,7 @@ import java.util.Scanner;
  * @author Alec Grace && Kilian Hammersmith
  * 
  */
+
 public class Utilities {
     
     private static Scanner scan = new Scanner(System.in);
@@ -643,6 +644,42 @@ public class Utilities {
          
         return choice;
     }
+    
+    public static int accountOptions2() {
+        int choice = 0;
+        String rawChoice;
+        boolean goodChoice = false, goodRaw = false;
+        
+        System.out.println("\nWhat operation would you like to perform on this account?" +
+                        "\n\n1. Check balance" +
+                        "\n2. Withdraw money" +
+                        "\n3. Deposit money" +
+                        "\n4. Change account type" + 
+                        "\n5. Close (delete) account" +
+                        "\n0. Back to main menu" +
+                        "\n\nEnter Choice: ");
+         do {   
+            try {
+                do {
+                    rawChoice = scan.nextLine();
+                    choice = Integer.parseInt(rawChoice);
+                    
+                    if (choice >=0 && choice < 6) {
+                        goodChoice = true;
+                        goodRaw = true;
+                    } else {
+                        System.out.println("Please enter integer between 0 and 5");
+                        goodChoice = false;
+                    }
+                } while (!goodChoice);
+            } catch (java.lang.NumberFormatException e) {
+                System.out.println("Please enter Integer...");
+                goodRaw = false;
+            }
+         } while (!goodRaw);
+         
+        return choice;
+    }
 
     public static void removeAccount(Account[] people, Account accountForRemoval) {
         
@@ -702,6 +739,32 @@ public class Utilities {
         Utilities.displayAll(savingAccounts);
     }
     
+    public static void bubbleSortFName(Account[] people) {
+        
+        int end = people.length - 1;
+        Account tempAccount;
+        boolean bypass = false;
+        
+        for (int i = 0; i < people.length - 1; i++) {
+            for (int j = 0; j < end; j++) {
+                bypass = false;
+                if (people[j+1] != null && 
+                        people[j].getFirstName().compareToIgnoreCase(people[j+1].getFirstName()) > 0) {
+                    tempAccount = people[j+1];
+                    people[j+1] = people[j];
+                    people[j] = tempAccount;
+                } else if (people[j+1] == null) {
+                    bypass = true;
+                }
+            }
+            
+
+            if (!bypass) {
+                end--;
+            }
+        }
+    }
+    
     public static void selectionSortAccounts(Account[] people) {
         
         int currentFront, minIndex, n = people.length;
@@ -731,6 +794,37 @@ public class Utilities {
         long totalTime = endTime - startTime;
         System.out.println("Sort time: " + totalTime + " nanoseconds.");
     }
+
+    public static Account binarySearchFName(String target, Account[] people, int leftIndex, int rightIndex) {
+        
+        int mid; 
+        
+        if (rightIndex >= leftIndex && rightIndex < people.length && leftIndex >= 0) {
+            while (people[rightIndex] == null) {
+                rightIndex--;
+            }
+            while (people[leftIndex] == null) {
+                leftIndex++;
+            }
+            
+            mid = leftIndex + ((rightIndex - leftIndex) / 2);
+            
+            if (people[mid].getFirstName().compareToIgnoreCase(target) == 0) {
+                return people[mid];
+            }
+            
+            if (people[mid].getFirstName().compareToIgnoreCase(target) < 0) {
+                return binarySearchFName(target, people, mid + 1, rightIndex);
+            }
+
+            return binarySearchFName(target, people, leftIndex, mid - 1);
+            
+        }
+        
+        return null;
+            
+    }
+
 }
 
 
