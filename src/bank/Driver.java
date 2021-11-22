@@ -120,10 +120,13 @@ public class Driver {
                     
                     switch (accountInfo[0]) {
                         case 1:
-                            accType = "checking";
+                            accType = "";
                             break;
                         case 2:
-                            accType = "saving";
+                            accType = " checking";
+                            break;
+                        case 3:
+                            accType = " saving";
                             break;
                         case 0: 
                             accType = null;
@@ -138,7 +141,7 @@ public class Driver {
                     }
                     
                     if (!bypass)
-                        System.out.println("There are " + accountInfo[1] + " " + accType + " accounts"
+                        System.out.println("There are " + accountInfo[1] + accType + " accounts"
                             + " in the system.");
                     
                     break;

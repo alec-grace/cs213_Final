@@ -212,18 +212,19 @@ public class Utilities {
             try {
                 
                 System.out.println("Select account type to count: " +
-                                "\n 1. Checking" +
-                                "\n 2. Saving" + 
+                                "\n 1. All accounts" +
+                                "\n 2. Checking" +
+                                "\n 3. Saving" + 
                                 "\n 0. Back to main menu" +
                                 "\n\nChoice: ");
                 
                 raw = scan.nextLine();
                 secondChoice = Integer.parseInt(raw);
                 
-                if (secondChoice >= 0 && secondChoice < 3) {
+                if (secondChoice >= 0 && secondChoice <= 3) {
                     goodInput = true;
                 } else {
-                    System.out.println("Please enter an integer between 0 and 2");
+                    System.out.println("Please enter an integer between 0 and 3");
                     goodInput = false;
                 }
                 
@@ -232,10 +233,11 @@ public class Utilities {
             }
         }
         
-                
         if (secondChoice == 1) {
-            returnList[1] = Account.getNumOfCheckings();
+            returnList[1] = Account.getNumOfAccounts();
         } else if (secondChoice == 2) {
+            returnList[1] = Account.getNumOfCheckings();
+        } else if (secondChoice == 3) {
             returnList[1] = Account.getNumOfSavings();
         } else {
             returnList[1] = -1;
