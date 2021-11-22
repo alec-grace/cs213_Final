@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
  * @author Alec Grace && Kilian Hammersmith
  * 
  */
+
 public class Account {
     
     private final String lastName;
@@ -24,11 +25,12 @@ public class Account {
     private static int numOfSavings = 0;
     private static int numOfCheckings = 0;
     
+    
     Account(String lName, String fName, char gender, String bday,
             char accType, int person, double initBalance) {
-        
-        lastName = lName;
-        firstName = fName;
+
+        lastName = lName.toUpperCase().charAt(0) + lName.substring(1);
+        firstName = fName.toUpperCase().charAt(0) + fName.substring(1);
         sex = gender;
         dob = bday;
         ssn = generateSSN();
@@ -135,6 +137,7 @@ public class Account {
         String account = (this.accountType == 'c') ? "Checking" : "Saving";
         String personT;
         
+        
         switch (this.personType) {
             case 1:
                 personT = "Student";
@@ -184,6 +187,10 @@ public class Account {
                 
     }
     
+    public int getAccountNumInt() {
+        return Integer.parseInt(this.accountNum);
+    }
+    
     public int getPersonType() {
         return this.personType; 
     }
@@ -199,6 +206,19 @@ public class Account {
     public String getFirstName() {
         return this.firstName;
     }
+    
+    //Class Variable Setters
+    
+    public static void removeSavingsAcc() {
+        numOfSavings--;
+        numOfAccounts--;
+    }
+    
+    public static void removeCheckingsAcc() {
+        numOfCheckings--;
+        numOfAccounts--;
+    }
+   
     //Class Variable Getters
     
     public static int getNumOfAccounts() {

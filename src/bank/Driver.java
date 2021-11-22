@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Driver {
     
-    public static void main(String args[]) {
+    public static void main(String args[]) throws InterruptedException {
         
         String[] names = new String[30];
         names = Utilities.randomNames(30);
@@ -72,6 +72,7 @@ public class Driver {
                     "\n7. Display all employee accounts with balance > $5000" + 
                     "\n8. Search for account by last name" +
                     "\n9. Display savings accounts sorted by first name" +
+                    "\n10. Display all accounts sorted by account number" +
                     "\n0. Exit\n";
         
         
@@ -92,10 +93,10 @@ public class Driver {
                     rawInput = sc.nextLine();
                     userChoice = Integer.parseInt(rawInput);
 
-                    if (userChoice >= 0 && userChoice < 10) {
+                    if (userChoice >= 0 && userChoice <= 10) {
                         goodInput = true;
                     } else {
-                        System.out.println("Please enter an integer between 0 and 9");
+                        System.out.println("Please enter an integer between 0 and 10");
                         goodInput = false;
                     }
                 } catch (java.lang.NumberFormatException e) {
@@ -169,25 +170,31 @@ public class Driver {
                     if (target != null) {
                         int nextChoice = Utilities.accountOptions();
                         switch (nextChoice) {
+                        //Check balance
                             case 1:
                                 System.out.println("Current balance: $" + Utilities.df.format(target.getCurrentBalance()));
                                 break;
+                        //Withdraw money        
                             case 2:
                                 double withdrawAmount = Utilities.getUserDouble("Enter amount to withdraw: ");
                                 Utilities.makeWithdrawal(target, withdrawAmount);
                                 break;
+                        //Deposit money
                             case 3:
                                 double depositAmount = Utilities.getUserDouble("Enter amount to deposit: ");
                                 Utilities.makeDeposit(target, depositAmount);
                                 break;
+                        //Add interest
                             case 4:
                                 target.addInterest();
                                 System.out.println("Successfully added interest to " + target.getLastName() + "'s account.");
                                 break;
+                        //Delete account 
                             case 5:
                                 Utilities.removeAccount(currentCustomers, target);
                                 System.out.println("Successfully removed " + target.getLastName() + "'s account.");
                                 break;
+                        //Back to main menu        
                             case 0:
                                 bypass = true;
                                 continue;
@@ -201,6 +208,11 @@ public class Driver {
                 //Display all saving accounts by bubble sort on first name
                 case 9:
                     Utilities.bubbleSortAccounts(currentCustomers);
+                    break;
+                //Selection sort by first name
+                case 10:
+                    Utilities.selectionSortAccounts(currentCustomers);
+                    Thread.sleep(2500);
                     Utilities.displayAll(currentCustomers);
                     break;
                 //Terminate the program

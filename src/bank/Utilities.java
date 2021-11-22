@@ -49,6 +49,7 @@ public class Utilities {
                 listOfNames[i] = allNames.get(rand).replaceAll("\"", "");
             }
         } catch (FileNotFoundException e) {
+            System.out.println("Must enter your filepath on Utilities.java, line: 35");
             e.printStackTrace();
         }
                 
@@ -592,12 +593,17 @@ public class Utilities {
         System.out.println("Enter last name of customer to search for: ");
         String lName = scan.nextLine();
         
+        long startTime = System.nanoTime();
         for (Account person : people) {
             if (person != null) {
                 if (lName.compareToIgnoreCase(person.getLastName()) == 0)
                     foundTarget = person;
             }
         }
+        long endTime = System.nanoTime();
+        long total = endTime - startTime;
+        
+        System.out.println("Total time: " + total + " nano seconds.");
         
         return foundTarget;
     }
@@ -642,34 +648,89 @@ public class Utilities {
         
         for (int i = 0; i < people.length; i++) {
             if (people[i] != null && 
-                    people[i].getAccountNum() == accountForRemoval.getAccountNum()) {
+                    people[i] == accountForRemoval) {
+                if (people[i].getAccountType() == 'c') {
+                    Account.removeCheckingsAcc();
+                } else if (people[i].getAccountType() == 's') {
+                    Account.removeSavingsAcc();
+                }
                 people[i] = null;
             }
         }
     }
 
-    public static void bubbleSortAccounts(Account[] people) {
+    public static void bubbleSortAccounts(Account[] people) throws InterruptedException {
         
-        int end = people.length - 1;
+        int nextIndex = 0;
+        Account[] savingAccounts = new Account[Account.getNumOfSavings()];
+        
+        for (int i = 0; i < people.length; i++) {
+            if (people[i] != null && people[i].getAccountType() == 's') {
+                savingAccounts[nextIndex] = people[i];
+                nextIndex++;
+            }
+        }
+        
+        int end = savingAccounts.length - 1;
         Account tempAccount;
         boolean bypass = false;
         
-        for (int i = 0; i < people.length - 1; i++) {
+        long startTime = System.nanoTime();
+        for (int i = 0; i < savingAccounts.length - 1; i++) {
             for (int j = 0; j < end; j++) {
                 bypass = false;
-                if (people[j+1] != null && 
-                        people[j].getFirstName().compareToIgnoreCase(people[j+1].getFirstName()) > 0) {
-                    tempAccount = people[j+1];
-                    people[j+1] = people[j];
-                    people[j] = tempAccount;
-                } else if (people[j+1] == null) {
+                if (savingAccounts[j+1] != null && 
+                        savingAccounts[j].getFirstName().compareToIgnoreCase(savingAccounts[j+1].getFirstName()) > 0) {
+                    tempAccount = savingAccounts[j+1];
+                    savingAccounts[j+1] = savingAccounts[j];
+                    savingAccounts[j] = tempAccount;
+                } else if (savingAccounts[j+1] == null) {
                     bypass = true;
                 }
             }
+            
 
             if (!bypass) {
                 end--;
             }
         }
+        long endTime = System.nanoTime();
+        
+        long total = endTime - startTime;
+        System.out.println("Total time: " + total + " nano seconds.");
+        Thread.sleep(2500);
+        Utilities.displayAll(savingAccounts);
+    }
+    
+    public static void selectionSortAccounts(Account[] people) {
+        
+        int currentFront, minIndex, n = people.length;
+        Account tempAccount;
+        
+        long startTime = System.nanoTime();
+        
+        for (int i = 0; i < n; i++) {
+            currentFront = i;
+            minIndex = currentFront;
+            if (people[currentFront] != null) {
+                tempAccount = null;
+                for (int j = currentFront + 1; j < n; j++) {
+                    if (people[j] != null) {
+                        if (people[j].getAccountNumInt() < people[minIndex].getAccountNumInt()) {
+                            minIndex = j;
+                        }
+                    }
+                }
+                tempAccount = people[minIndex];
+                people[minIndex] = people[currentFront];
+                people[currentFront] = tempAccount;
+            }
+        }
+        
+        long endTime = System.nanoTime();
+        long totalTime = endTime - startTime;
+        System.out.println("Sort time: " + totalTime + " nanoseconds.");
     }
 }
+
+
