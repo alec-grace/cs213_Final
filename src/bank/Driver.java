@@ -72,7 +72,7 @@ public class Driver {
                     "\n7. Display all employee accounts with balance > $5000" + 
                     "\n8. Search for account by last name" +
                     "\n9. Display savings accounts sorted by first name" +
-                    "\n10 Search for accound by first name" + 
+                    "\n10 Search for account by first name" + 
                     "\n11. Display all accounts sorted by account number" +
                     "\n0. Exit\n";
         
@@ -170,8 +170,10 @@ public class Driver {
                     break;
                 //Search for a specific account by last name (linear search)
                 case 8:
+                    Utilities.cleanAccountList(currentCustomers);
                     Account target = Utilities.searchLinearLastName(currentCustomers);
                     if (target != null) {
+                        System.out.println("Found account for: " + target.getFirstName() + " " + target.getLastName());
                         int nextChoice = Utilities.accountOptions();
                         switch (nextChoice) {
                         //Check balance
@@ -211,23 +213,22 @@ public class Driver {
                     break;
                 //Display all saving accounts by bubble sort on first name
                 case 9:
+                    Utilities.cleanAccountList(currentCustomers);
                     Utilities.bubbleSortAccounts(currentCustomers);
                     break;
                 //Binary search by first name
                 case 10:
+                    Utilities.cleanAccountList(currentCustomers);
                     System.out.println("Enter first name to search for: ");
                     String searchName = sc.nextLine();
                     
                     Utilities.bubbleSortFName(currentCustomers);
                     
-                    long start = System.nanoTime();
                     Account searchTarget = Utilities.binarySearchFName(searchName, currentCustomers, 0, currentCustomers.length - 1);
-                    long end = System.nanoTime();
-                    long total = end - start;
-                    
-                    System.out.println("Total search time: " + total + " nanoseconds.");
                     
                     if (searchTarget != null) {
+                        
+                        System.out.println("Found account: " + searchTarget.getFirstName() + " " + searchTarget.getLastName());
                         int nextChoice = Utilities.accountOptions2();
                         switch (nextChoice) {
                         //Check balance
@@ -252,7 +253,7 @@ public class Driver {
                         //Delete account 
                             case 5:
                                 Utilities.removeAccount(currentCustomers, searchTarget);
-                                System.out.println("Successfully removed " + searchTarget.getLastName() + "'s account.");
+                                System.out.println("Successfully removed " + searchTarget.getFirstName() + "'s account.");
                                 break;
                         //Back to main menu        
                             case 0:
@@ -260,6 +261,7 @@ public class Driver {
                                 continue;
                            default:
                                 System.out.println("Error with \"nextChoice\" variable...");
+                                break;
                         }
                     } else {
                         System.out.println("That customer does not exist in our database.");

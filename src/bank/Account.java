@@ -53,8 +53,8 @@ public class Account {
     Account(String lName, String fName, char gender, String bday,
             char accType, int person) {
         
-        lastName = lName;
-        firstName = fName;
+        lastName = lName.toUpperCase().charAt(0) + lName.substring(1);
+        firstName = fName.toUpperCase().charAt(0) + fName.substring(1);
         sex = gender;
         dob = bday;
         ssn = generateSSN();
@@ -209,6 +209,15 @@ public class Account {
     
     public void switchAccountType() {
         this.accountType = (this.accountType == 'c') ? 's' : 'c';
+        
+        if (this.accountType == 'c') {
+            Account.removeSavingsAcc();
+            Account.addCheckingsAcc();
+        } else {
+            Account.removeCheckingsAcc();
+            Account.addSavingsAcc();
+        }
+        
     }
     
     //Class Variable Setters
@@ -223,6 +232,14 @@ public class Account {
         numOfAccounts--;
     }
    
+    public static void addSavingsAcc() {
+        numOfSavings++;
+    }
+    
+    public static void addCheckingsAcc() {
+        numOfCheckings++;
+    }
+    
     //Class Variable Getters
     
     public static int getNumOfAccounts() {

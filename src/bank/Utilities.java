@@ -96,7 +96,7 @@ public class Utilities {
         
         if (deposit > 0) {
             person.depositAmount(deposit);
-            System.out.println("Successfully deposited $" + deposit + 
+            System.out.println("Successfully deposited $" + df.format(deposit) + 
                     " to " + person.getLastName() + "'s account.");
         } else {
             System.out.println("Must enter positive value for deposit.");
@@ -185,10 +185,13 @@ public class Utilities {
     
     public static void makeWithdrawal(Account person, double withdraw) {
         
-        if (withdraw > 0) {
+        if (withdraw > 0 && withdraw <= person.getCurrentBalance()) {
             person.withdrawAmount(withdraw);
-            System.out.println("Successfully withdrew $" + withdraw +
-                    " to " + person.getLastName() + "'s account.");
+            System.out.println("Successfully withdrew $" + df.format(withdraw) +
+                    " from " + person.getLastName() + "'s account.");
+        } else if (withdraw > person.getCurrentBalance()){
+            System.out.println(person.getFirstName() + " " + person.getLastName() + "\'s account"
+                            + " has less than $" + df.format(withdraw) + " available.");
         } else {
             System.out.println("Must enter positive value to withdraw.");
         }
@@ -249,7 +252,7 @@ public class Utilities {
     
     public static boolean playAgain(boolean bypass) {
         if (!bypass) {
-            System.out.println("Would you like to perform another action? (Y/N)");
+            System.out.println("\nWould you like to perform another action? (Y/N)");
             String playAgain = scan.nextLine().toLowerCase();
             playAgain = (playAgain.length() == 0) ? "n" : playAgain;
             
@@ -383,7 +386,6 @@ public class Utilities {
                     goodChar = false;
                 }
             } catch (java.lang.StringIndexOutOfBoundsException e) {
-                // TODO Auto-generated catch block
                 System.out.println("Must enter some input...");
             }
         } while (!goodChar);
@@ -750,13 +752,13 @@ public class Utilities {
         for (int i = 0; i < people.length - 1; i++) {
             for (int j = 0; j < end; j++) {
                 bypass = false;
-                if (people[j+1] != null && 
+                if (people[j+1] != null && people[j] != null &&
                         people[j].getFirstName().compareToIgnoreCase(people[j+1].getFirstName()) > 0) {
                     tempAccount = people[j+1];
                     people[j+1] = people[j];
                     people[j] = tempAccount;
-                } else if (people[j+1] == null) {
-                    bypass = true;
+                } else {
+                    continue;
                 }
             }
             
@@ -801,6 +803,9 @@ public class Utilities {
         
         int mid; 
         
+        long endTime, total;
+        long startTime = System.nanoTime();
+        
         if (rightIndex >= leftIndex && rightIndex < people.length && leftIndex >= 0) {
             while (people[rightIndex] == null) {
                 rightIndex--;
@@ -811,7 +816,14 @@ public class Utilities {
             
             mid = leftIndex + ((rightIndex - leftIndex) / 2);
             
+            while (people[mid] == null) {
+                mid--;
+            }
+            
             if (people[mid].getFirstName().compareToIgnoreCase(target) == 0) {
+                endTime = System.nanoTime();
+                total = endTime - startTime;
+                System.out.println("Total search time: " + total + " nanoseconds.");
                 return people[mid];
             }
             
@@ -823,10 +835,31 @@ public class Utilities {
             
         }
         
+        endTime = System.nanoTime();
+        total = endTime - startTime;
+        System.out.println("Total search time: " + total + " nanoseconds.");
+        
         return null;
             
     }
 
+    public static void cleanAccountList(Account[] people) {
+        
+        for (int i = 0; i < people.length - 1; i++) {
+            
+            if (people[i] == null) {
+                for (int j = i + 1; j < people.length - 1; j++) {
+                    if (people[j] != null) {
+                        people[j-1] = people[j];
+                        people[j] = null;
+                    }
+                }
+            }
+            
+        }
+        
+    }
+    
 }
 
 
